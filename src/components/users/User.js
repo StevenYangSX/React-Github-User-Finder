@@ -1,41 +1,36 @@
-import React, { Fragment, Component } from 'react'
+import React, { Fragment, useEffect, useContext } from 'react'
 import Spinner from '../layout/Spinner'
-import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 import Repos from '../repos/Repos';
-class User extends Component {
+import GithubContext from '../../context/github/githubContext';
+
+const User = ({ match}) => {
+    //in functional component, we can not use these life cycle functions.
+    //instead, we use useEffect
+    const githubContext = useContext(GithubContext);
+    const {getUser, loading, user, repos, getUserRepos} = githubContext;
     
-    componentDidMount() {
-        this.props.getUser(this.props.match.params.login);
-        this.props.getUserRepos(this.props.match.params.login)
+    useEffect(() =>{
+        getUser(match.params.login);
+        getUserRepos(match.params.login)
+        // eslint-disable-next-line
+    },[]);
 
-    }
 
-    static propTypes = {
-        loading : PropTypes.bool,
-        user: PropTypes.object.isRequired,
-        getUser : PropTypes.func.isRequired,
-        getUserRepos: PropTypes.func.isRequired,
-        repos: PropTypes.array.isRequired,
-    }
-
-    render() {
-        const {name, 
-                avatar_url,
-                location,
-                bio,
-                company,
-                blog,
-                login,
-                html_url, 
-                followers,
-                following,
-                public_repos,
-                public_gists,
-                hireable} = this.props.user;
-
-        const {loading, repos} = this.props;
-        
+    const {name, 
+            avatar_url,
+            location,
+            bio,
+            company,
+            blog,
+            login,
+            html_url, 
+            followers,
+            following,
+            public_repos,
+            public_gists,
+            hireable} = user;
+      
         if(loading) {
             return <Spinner/>
         }else{
@@ -97,8 +92,6 @@ class User extends Component {
                
             )
         }
-        
-    }
 }
 
 export default User
